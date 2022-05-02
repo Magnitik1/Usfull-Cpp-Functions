@@ -1,0 +1,54 @@
+HANDLE handle;
+	handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO structCursorInfo;
+	GetConsoleCursorInfo(handle, &structCursorInfo);
+	structCursorInfo.bVisible = FALSE;
+	SetConsoleCursorInfo(handle, &structCursorInfo);
+
+////////////////////////
+
+void setcolor(int text, int bg) {
+	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hStdOut, (WORD)((bg << 4) | text));
+}
+
+////////////////////////
+
+void setcur(int x, int y)
+{
+	COORD coord;
+	coord.X = x;
+	coord.Y = y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+};
+
+////////////////////////
+
+int x=0, y = 0;
+    while (1) {
+        COORD coord;
+        HANDLE hin = GetStdHandle(STD_INPUT_HANDLE);
+        INPUT_RECORD InputRecord;
+        DWORD Events;
+        SetConsoleMode(hin, ENABLE_PROCESSED_INPUT | ENABLE_MOUSE_INPUT | ENABLE_EXTENDED_FLAGS | ~ENABLE_QUICK_EDIT_MODE);
+        ReadConsoleInput(hin, &InputRecord, 1, &Events);
+        if (InputRecord.Event.MouseEvent.dwButtonState == FROM_LEFT_1ST_BUTTON_PRESSED) {
+            coord.X = InputRecord.Event.MouseEvent.dwMousePosition.X;
+            coord.Y = InputRecord.Event.MouseEvent.dwMousePosition.Y;
+            cout << InputRecord.Event.MouseEvent.dwMousePosition.X << " x " << InputRecord.Event.MouseEvent.dwMousePosition.Y << " ";
+            x = coord.X / 3;
+            y = coord.Y / 2;
+        }
+    }
+
+/////////////////////////
+HANDLE out = GetStdHandle(STD_OUTPUT_HANDLE);
+
+void fontsize(int a, int b) {
+    PCONSOLE_FONT_INFOEX lpConsoleCurrentFontEx = new CONSOLE_FONT_INFOEX();
+    lpConsoleCurrentFontEx->cbSize = sizeof(CONSOLE_FONT_INFOEX);
+    GetCurrentConsoleFontEx(out, 0, lpConsoleCurrentFontEx);
+    lpConsoleCurrentFontEx->dwFontSize.X = a;
+    lpConsoleCurrentFontEx->dwFontSize.Y = b;
+    SetCurrentConsoleFontEx(out, 0, lpConsoleCurrentFontEx);
+}
